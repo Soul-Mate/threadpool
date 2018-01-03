@@ -1,4 +1,4 @@
-#include <pthread.h>
+
 
 #ifndef _THREAD_POOL
 #define _THREAD_POOL
@@ -7,12 +7,15 @@
 #define DEBUG
 #endif /*DEBUG*/
 
+#include <pthread.h>
+#include <stdlib.h>
+
 /*job sign struct*/
-typedef struct job_sign {
-	int has;
+typedef struct watch_flag {
+	int flag;
 	pthread_mutex_t sign_mutex;
     pthread_cond_t sign_cond;
-}job_sign;
+}watch_flag;
 
 /* job node struct */
 typedef struct job{
@@ -26,7 +29,7 @@ typedef struct job_queue {
 	int len;
 	job *front;
 	job *rear;
-	job_sign *has_job;
+	watch_flag *has_job;
 	pthread_rwlock_t queue_rwlock;
 }job_queue;
 
@@ -50,4 +53,7 @@ typedef struct th_pool {
 int thpool_init(int nums);
 int thread_create(th *thread, int i, th_pool *pool);
 void *thread_run(void *arg);
+int watch_flag_init(watch_flag *);
+int job_queue_init(job_queue **);
+void job_queue_push(job_queue *ptr_queue, job *ptr_job);
 #endif /*_THREAD_POOL*/
