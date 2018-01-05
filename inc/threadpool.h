@@ -11,17 +11,17 @@
 #include <stdlib.h>
 
 /*job sign struct*/
-typedef struct watch_flag {
+typedef struct _job_flag {
 	int flag;
 	pthread_mutex_t sign_mutex;
     pthread_cond_t sign_cond;
-}watch_flag;
+}job_flag;
 
 /* job node struct */
-typedef struct job{
+typedef struct _job{
 	void *arg;
 	void *(*func)(void *arg);
-	struct job *next;
+	struct _job *next;
 }job;
 
 /* job queue struct */
@@ -29,31 +29,38 @@ typedef struct job_queue {
 	int len;
 	job *front;
 	job *rear;
-	watch_flag *has_job;
+	job_flag *has_job;
 	pthread_rwlock_t queue_rwlock;
 }job_queue;
 
 /*thread struct*/
-typedef struct th {
+typedef struct _thread {
 	int id;			/* thread sequence number */
 	pthread_t tid;	/* thread thread_t */
-}th;
+}thread;
 
 /* thread pool struct */
-typedef struct th_pool {
+typedef struct _thread_pool {
 	volatile int work_num;
 	volatile int alive_num;
 	pthread_rwlock_t pool_rwlock;
 	pthread_mutex_t pool_mutex;
 	pthread_cond_t pool_cond;
-	th **threads;
+	thread **threads;
 	job_queue *thread_job_queue;
-}th_pool;
+}thread_pool;
 
-int thpool_init(int nums);
-int thread_create(th *thread, int i, th_pool *pool);
-void *thread_run(void *arg);
-int watch_flag_init(watch_flag *);
+int job_flag_init(job_flag *);
+
+int thpool_init(int);
+int thpool_wait(thread_pool *);
+
+int thread_create(thread *, int, thread_pool *);
+void *thread_run(void *);
+
+
 int job_queue_init(job_queue **);
-void job_queue_push(job_queue *ptr_queue, job *ptr_job);
+void job_queue_push(job_queue *, job *);
+job * job_queue_pull(job_queue *);
+
 #endif /*_THREAD_POOL*/
