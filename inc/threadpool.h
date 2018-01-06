@@ -50,10 +50,17 @@ typedef struct _thread_pool {
 	job_queue *thread_job_queue;
 }thread_pool;
 
-int job_flag_init(job_flag *);
+int job_flag_init(job_flag **);
+void job_flag_wait(job_flag *);
+void job_flag_tell(job_flag *);
 
-int thpool_init(int);
-int thpool_wait(thread_pool *);
+
+thread_pool * thpool_init(int);
+void thpool_wait(thread_pool *);
+int thpool_add_work(thread_pool *pool,void *(*func)(void *),void *);
+void thpool_resume(thread_pool *pool);
+void thpool_pasue(thread_pool *pool);
+
 
 int thread_create(thread *, int, thread_pool *);
 void *thread_run(void *);

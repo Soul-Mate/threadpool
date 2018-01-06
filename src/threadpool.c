@@ -49,6 +49,16 @@ int thpool_add_work(thread_pool *pool, void *(*func)(void *arg), void *arg)
 	job_queue_push(pool->thread_job_queue, ptr_job);
 }
 
+void thpool_resume(thread_pool *pool)
+{
+
+}
+
+void thpool_pasue(thread_pool *pool)
+{
+	
+}
+
 int thread_create(thread *ptr_thread, int i, thread_pool *pool)
 {
 
